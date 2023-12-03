@@ -1,20 +1,25 @@
-drop table if exists logistics;
-create table logistics (
+drop table if exists ticket;
+create table ticket (
 	id serial,
-	product_nama text,
-	ekspedisi_nama text,
-	ongkir text,
-	kota_tujuan text,
-	handphone text,
-	nomor_resi text,
-	tanggal_dikirim date,
-	tanggal_sampai date
+	class_name text,
+	customer_name text,
+	gender text,
+	stadium_name text,
+	ticket_price text,
+	match_name text,
+	time_info time,
+	date_info date
 );
 
-insert into logistics (product_nama, ekspedisi_nama, ongkir, kota_tujuan, handphone, nomor_resi, tanggal_dikirim, tanggal_sampai) 
+insert into ticket (class_name, customer_name, gender, stadium_name, ticket_price, match_name, time_info, date_info) 
 values
-	('Sepatu', 'JNT', 'FREE', 'SEMARANG', 62838, 'A009', '2023-10-01', '2023-10-11'),
-	('Sepatu', 'JNT', 'FREE', 'SEMARANG', 62838, 'A009', '2023-10-01', '2023-10-11'),
-	('Sepatu', 'JNT', 'FREE', 'SEMARANG', 62838, 'A009', '2023-10-01', '2023-10-11'),
-	('Sepatu', 'JNT', 'FREE', '"Surabaya"', 62838, 'A009', '2023-10-01', '2023-10-11')
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03'),
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:00', '2024-10-03')
 	;
