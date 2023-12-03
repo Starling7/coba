@@ -1,26 +1,70 @@
-drop table if exists schedule;
-create table schedule (
-	id serial,
-	train_name text,
-	passenger_name text,
-	gender text,
-	departure_station text,
-	ticket_price text,
-	arrival_station text,
-	departure_time time,
-	departure_date date
-);
+import streamlit as st
+from sqlalchemy import text
 
-insert into schedule (train_name, passenger_name, gender, departure_station, ticket_price, arrival_station, departure_time, departure_date) 
-values
-	('Argo Semeru (17)', 'Juan', 'male', 'Gubeng (SGU)', 630000, 'Malang (ML)', '09:00', '2023-10-01'),
-	('Bima (23)', 'Eafa', 'female', 'Gambir (GMR)', 290000, 'Gubeng (SGU)', '10:00', '2022-11-02'),
-	('Pandagulang (77F)', 'Alea', 'female', 'Pasarsenen (PSE)', 340000, 'Kertosono (KTN)', '10:00', '2022-03-03'),
-	('Sancaka (22CA)', 'Abyan', 'male', 'Gubeng (SGU)', 330000, 'Nganjuk (NJ)', '11:00', '2022-10-04'),
-	('Jayakarta (217)', 'Eisa', 'male', 'Mojokerto (MR)', 750000, 'Yogyakarta (YK)', '23:00', '2022-10-05'),
-	('Bima (23)', 'Maya', 'female', 'Madiun (MN)', 280000, 'Kertosono (KTN)', '08:00', '2022-08-18'),
-	('Jayakarta (217)', 'Aisha', 'female', 'Gubeng (SGU)', 320000, 'Malang (ML)', '20:30', '2022-07-07'),
-	('Argo Semeru (17)', 'Nicolas', 'male', 'Pasarsenen (PSE)', 550000, 'Nganjuk (NJ)', '22:00', '2022-05-08'),
-	('Sancaka (22CA)', 'Fatima', 'female', 'Yogyakarta (YK)', 450000, 'Gubeng (SGU)', '11:30', '2022-10-09'),
-	('Jayakarta (217)', 'Louis', 'male', 'Madiun (MN)', 625000, 'Gubeng (SGU)', '12:40', '2022-10-11')
-	;
+list_product = ['', 'Sepatu', 'Bola', 'Jersey', 'Topi', 'Celana']
+list_ongkir = ['', 'FREE', 'FEE']
+
+conn = st.connection("postgresql", type="sql", 
+                     url="postgresql://radityacr740:o8KrhDcWj4wN@ep-super-smoke-81752083.us-east-2.aws.neon.tech/fpmbddb")
+with conn.session as session:
+    query = text('CREATE TABLE IF NOT EXISTS LOGISTICS (id serial, product_nama varchar, ekspedisi_nama varchar, ongkir text, kota_tujuan text, handphone varchar, nomor_resi text, tanggal_dikirim date, tanggal_sampai);')
+    session.execute(query)
+
+st.header('DATA LOGISTIK PT SIGMA JAYA')
+page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
+
+if page == "View Data":
+    data = conn.query('SELECT * FROM logistics ORDER By id;', ttl="0").set_index('id')
+    st.dataframe(data)
+
+if page == "Edit Data":
+    if st.button('Tambah Data'):
+        with conn.session as session:
+            query = text('INSERT INTO logistics (product_nama, ekspedisi_nama, ongkir, kota_tujuan, handphone, nomor_resi, tanggal_dikirim, tanggal_sampai) \
+                          VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9);')
+            session.execute(query, {'1':'', '2':'', '3':'', '4':'', '5':'', '6':'', '7':None, '8':None})
+            session.commit()
+
+    data = conn.query('SELECT * FROM logistics ORDER By id;', ttl="0")
+    for _, result in data.iterrows():        
+        id = result['id']
+        product_nama_lama = result["product_nama"]
+        ekspedisi_nama_lama = result["ekspedisi_nama"]
+        ongkir_lama = result["ongkir"]
+        kota_tujuan_lama = result["kota_tujuan"]
+        handphone_lama = result["handphone"]
+        nomor_resi_lama = result["nomor_resi"]
+        tanggal_dikirim_lama = result["tanggal_dikirim"]
+        tanggal_sampai_lama = result["tanggal_sampai"]
+
+        with st.expander(f'a.n. {product_nama_lama}'):
+            with st.form(f'data-{id}'):
+                product_nama_baru = st.selectbox("product_nama", list_product, list_product.index(product_nama_lama))
+                ekspedisi_nama_baru = st.text_input("ekspedisi_nama", ekspedisi_nama_lama)
+                ongkir_baru = st.selectbox("ongkir", list_ongkir, list_ongkir.index(ongkir_lama))
+                kota_tujuan_baru = st.text_input("kota_tujuan" , kota_tujuan_lama)
+                handphone_baru = st.text_input("handphone", handphone_lama)
+                nomor_resi_baru = st.text_input("nomor_resi", nomor_resi_lama)
+                tanggal_dikirim_baru = st.date_input("tanggal_dikirim", tanggal_dikirim_lama)
+                tanggal_sampai_baru = st.date_input("tanggal_sampai", tanggal_sampai_lama)
+                
+                col1, col2 = st.columns([1, 6])
+
+                with col1:
+                    if st.form_submit_button('UPDATE'):
+                        with conn.session as session:
+                            query = text('UPDATE logistics \
+                                          SET product_nama=:1, ekspedisi_nama=:2, ongkir=:3, kota_tujuan=:4, \
+                                          handphone=:5, nomor_resi=:6, tanggal_dikirim=:7, tanggal_sampai=:8 \
+                                          WHERE id=:9;')
+                            session.execute(query, {'1':product_nama_baru, '2':ekspedisi_nama_baru, '3':ongkir_baru, '4':kota_tujuan_baru, 
+                                                    '5':handphone_baru, '6':nomor_resi_baru, '7':tanggal_dikirim_baru, '8':tanggal_sampai_baru, '9':id})
+                            session.commit()
+                            st.experimental_rerun()
+                
+                with col2:
+                    if st.form_submit_button('DELETE'):
+                        query = text(f'DELETE FROM schedule WHERE id=:1;')
+                        session.execute(query, {'1':id})
+                        session.commit()
+                        st.experimental_rerun()
