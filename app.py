@@ -21,7 +21,7 @@ if page == "View Data":
 if page == "Edit Data":
     if st.button('Tambah Data'):
         with conn.session as session:
-            query = text('INSERT INTO tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, macth_name, date_info) \
+            query = text('INSERT INTO tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, match_name, date_info) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7);')
             session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None})
             session.commit()
@@ -34,7 +34,7 @@ if page == "Edit Data":
         gender_lama = result["gender"]
         stadium_name_lama = result["stadium_name"]
         ticket_price_lama = result["ticket_price"]
-        macth_name_lama = result["macth_name"]
+        match_name_lama = result["match_name"]
         date_info_lama = result["date_info"]
 
         with st.expander(f'a.n. {supporter_name_lama}'):
@@ -44,7 +44,7 @@ if page == "Edit Data":
                 gender_baru = st.selectbox("gender", list_gender, list_gender.index(gender_lama))
                 stadium_name_baru = st.text_input("stadium_name", stadium_name_lama)
                 ticket_price_baru = st.text_input("ticket_price", ticket_price_lama)
-                macth_name_baru = st.text_input("macth_name", macth_name_lama)
+                match_name_baru = st.text_input("match_name", match_name_lama)
                 date_info_baru = st.date_input("date_info", date_info_lama)
                 
                 col1, col2 = st.columns([1, 6])
@@ -54,10 +54,10 @@ if page == "Edit Data":
                         with conn.session as session:
                             query = text('UPDATE tickets \
                                           SET tribune_name=:1, supporter_name=:2, gender=:3, stadium_name=:4, \
-                                          ticket_price=:5, macth_name=:6, date_info=:7 \
+                                          ticket_price=:5, match_name=:6, date_info=:7 \
                                           WHERE id=:8;')
                             session.execute(query, {'1':tribune_name_baru, '2':supporter_name_baru, '3':gender_baru, '4':str(stadium_name_baru), 
-                                                    '5':ticket_price_baru, '6':macth_name_baru, '7':date_info_baru, '8':id})
+                                                    '5':ticket_price_baru, '6':match_name_baru, '7':date_info_baru, '8':id})
                             session.commit()
                             st.experimental_rerun()
                 
