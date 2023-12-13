@@ -1,71 +1,71 @@
 import streamlit as st
 from sqlalchemy import text
 
-list_class = ['', 'Economy', 'VIP', 'VVIP', 'Reguler',]
+list_train = ['', 'Argo Semeru (17)', 'Bima (23)', 'Pandagulang (77F)', 'Sancaka (22CA)', 'Jayakarta (217)']
 list_gender = ['', 'male', 'female']
 
 conn = st.connection("postgresql", type="sql", 
                      url="postgresql://radityacr740:o8KrhDcWj4wN@ep-super-smoke-81752083.us-east-2.aws.neon.tech/fpmbddb")
 with conn.session as session:
-    query = text('CREATE TABLE IF NOT EXISTS TICKETS (id serial, class_name varchar, supporter_name varchar, gender char(25), \
-                                                       stadium_name varchar, ticket_price varchar, match_name text, time_info time, date_info date);')
+    query = text('CREATE TABLE IF NOT EXISTS SCHEDULE (id serial, train_name varchar, passenger_name varchar, gender char(25), \
+                                                       departure_station varchar, ticket_price varchar, arrival_station text, departure_date date);')
     session.execute(query)
 
-st.header('FOOTBALL TICKETS')
+st.header('DATABASE PASSENGER KAI')
 page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
 
 if page == "View Data":
-    data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0").set_index('id')
+    data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0").set_index('id')
     st.dataframe(data)
 
 if page == "Edit Data":
     if st.button('Tambah Data'):
         with conn.session as session:
-            query = text('INSERT INTO tickets (class_name, supporter_name, gender, stadium_name, ticket_price, match_name, time_info, date_info) \
+            query = text('INSERT INTO schedule (train_name, passenger_name, gender, departure_station, ticket_price, arrival_station, departure_time, departure_date) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7, :8);')
             session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None, '8':None})
             session.commit()
 
-    data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0")
+    data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0")
     for _, result in data.iterrows():        
         id = result['id']
-        class_name_lama = result["class_name"]
-        supporter_name_lama = result["supporter_name"]
+        train_name_lama = result["train_name"]
+        passenger_name_lama = result["passenger_name"]
         gender_lama = result["gender"]
-        stadium_name_lama = result["stadium_name"]
+        departure_station_lama = result["departure_station"]
         ticket_price_lama = result["ticket_price"]
-        match_name_lama = result["match_name"]
-        time_info_lama = result["time_info"]
-        date_info_lama = result["date_info"]
+        arrival_station_lama = result["arrival_station"]
+        departure_time_lama = result["departure_time"]
+        departure_date_lama = result["departure_date"]
 
-        with st.expander(f'a.n. {supporter_name_lama}'):
+        with st.expander(f'a.n. {passenger_name_lama}'):
             with st.form(f'data-{id}'):
-                class_name_baru = st.selectbox("class_name", list_class, list_class.index(class_name_lama))
-                supporter_name_baru = st.text_input("supporter_name", supporter_name_lama)
+                train_name_baru = st.selectbox("train_name", list_train, list_train.index(train_name_lama))
+                passenger_name_baru = st.text_input("passenger_name", passenger_name_lama)
                 gender_baru = st.selectbox("gender", list_gender, list_gender.index(gender_lama))
-                stadium_name_baru = st.text_input("stadium_name", stadium_name_lama)
+                departure_station_baru = st.text_input("departure_station", departure_station_lama)
                 ticket_price_baru = st.text_input("ticket_price", ticket_price_lama)
-                match_name_baru = st.text_input("match_name", match_name_lama)
-                time_info_baru = st.time_input("time_info", time_info_lama)
-                date_info_baru = st.date_input("date_info", date_info_lama)
+                arrival_station_baru = st.text_input("arrival_station", arrival_station_lama)
+                departure_time_baru = st.time_input("departure_time", departure_time_lama)
+                departure_date_baru = st.date_input("departure_date", departure_date_lama)
                 
                 col1, col2 = st.columns([1, 6])
 
                 with col1:
                     if st.form_submit_button('UPDATE'):
                         with conn.session as session:
-                            query = text('UPDATE tickets \
-                                          SET class_name=:1, supporter_name=:2, gender=:3, stadium_name=:4, \
-                                          ticket_price=:5, match_name=:6, time_info=:7, date_info=:8 \
+                            query = text('UPDATE schedule \
+                                          SET train_name=:1, passenger_name=:2, gender=:3, departure_station=:4, \
+                                          ticket_price=:5, arrival_station=:6, departure_time=:7, departure_date=:8 \
                                           WHERE id=:9;')
-                            session.execute(query, {'1':class_name_baru, '2':supporter_name_baru, '3':gender_baru, '4':str(stadium_name), 
-                                                    '5':ticket_price_baru, '6':match_name_baru, '7':time_info_baru, '8':date_info_baru, '9':id})
+                            session.execute(query, {'1':train_name_baru, '2':passenger_name_baru, '3':gender_baru, '4':str(departure_station_baru), 
+                                                    '5':ticket_price_baru, '6':arrival_station_baru, '7':departure_time_baru, '8':departure_date_baru, '9':id})
                             session.commit()
                             st.experimental_rerun()
                 
                 with col2:
                     if st.form_submit_button('DELETE'):
-                        query = text(f'DELETE FROM tickets WHERE id=:1;')
+                        query = text(f'DELETE FROM schedule WHERE id=:1;')
                         session.execute(query, {'1':id})
                         session.commit()
                         st.experimental_rerun()
