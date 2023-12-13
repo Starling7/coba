@@ -8,7 +8,7 @@ conn = st.connection("postgresql", type="sql",
                      url="postgresql://radityacr740:o8KrhDcWj4wN@ep-super-smoke-81752083.us-east-2.aws.neon.tech/fpmbddb")
 with conn.session as session:
     query = text('CREATE TABLE IF NOT EXISTS TICKETS (id serial, tribune_name varchar, supporter_name varchar, gender char(25), \
-                                                       stadium_name varchar, ticket_price varchar, match_name text, date_info date);')
+                                                       stadium_name varchar, ticket_price varchar, match_name varchar, date_info date);')
     session.execute(query)
 
 st.header('FOOTBALL TICKETS DATABASES')
