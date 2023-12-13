@@ -1,26 +1,22 @@
-drop table if exists schedule;
-create table schedule (
+drop table if exists tickets;
+create table tickets (
 	id serial,
-	train_name text,
-	passenger_name text,
+	tribune_name text,
+	supporter_name text,
 	gender text,
-	departure_station text,
+	stadium_name text,
 	ticket_price text,
-	arrival_station text,
-	departure_time time,
-	departure_date date
+	match_name text,
+	time_info time,
+	date_info date
 );
 
-insert into schedule (train_name, passenger_name, gender, departure_station, ticket_price, arrival_station, departure_time, departure_date) 
+insert into tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, match_name, time_info, date_info) 
 values
-	('Argo Semeru (17)', 'Juan', 'male', 'Gubeng (SGU)', 630000, 'Malang (ML)', '09:00', '2023-10-01'),
-	('Bima (23)', 'Eafa', 'female', 'Gambir (GMR)', 290000, 'Gubeng (SGU)', '10:00', '2022-11-02'),
-	('Pandagulang (77F)', 'Alea', 'female', 'Pasarsenen (PSE)', 340000, 'Kertosono (KTN)', '10:00', '2022-03-03'),
-	('Sancaka (22CA)', 'Abyan', 'male', 'Gubeng (SGU)', 330000, 'Nganjuk (NJ)', '11:00', '2022-10-04'),
-	('Jayakarta (217)', 'Eisa', 'male', 'Mojokerto (MR)', 750000, 'Yogyakarta (YK)', '23:00', '2022-10-05'),
-	('Bima (23)', 'Maya', 'female', 'Madiun (MN)', 280000, 'Kertosono (KTN)', '08:00', '2022-08-18'),
-	('Jayakarta (217)', 'Aisha', 'female', 'Gubeng (SGU)', 320000, 'Malang (ML)', '20:30', '2022-07-07'),
-	('Argo Semeru (17)', 'Nicolas', 'male', 'Pasarsenen (PSE)', 550000, 'Nganjuk (NJ)', '22:00', '2022-05-08'),
-	('Sancaka (22CA)', 'Fatima', 'female', 'Yogyakarta (YK)', 450000, 'Gubeng (SGU)', '11:30', '2022-10-09'),
-	('Jayakarta (217)', 'Louis', 'male', 'Madiun (MN)', 625000, 'Gubeng (SGU)', '12:40', '2022-10-11')
+	('Economy', 'Agam', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:05', '2024-10-03'),
+	('VVIP', 'Jose', 'male', 'Jakarta International Stadium', 500000 , 'Indonesia vs Argentina', '19:06', '2024-10-03'),
+	('VVIP', 'Malik', 'male', 'Jakarta International Stadium', 500000 , 'Indonesia vs Argentina', '19:04', '2024-10-03'),
+	('VVIP', 'Yoze', 'female', 'Jakarta International Stadium', 500000 , 'Indonesia vs Argentina', '19:20', '2024-10-03'),
+	('Economy', 'Ahmad', 'male', 'Jakarta International Stadium', 150000 , 'Indonesia vs Argentina', '19:10', '2024-10-03'),
+	('Regular', 'Ammar', 'male', 'Jakarta International Stadium', 250000 , 'Indonesia vs Argentina', '19:11', '2024-10-03')
 	;
