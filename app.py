@@ -26,7 +26,7 @@ if page == "Edit Data":
         with conn.session as session:
             query = text('INSERT INTO tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, match_name, date_info) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7);')
-            session.execute(query, {'1':'', '2':'', '3':'', '4':'', '5':'', '6':'', '7':None})
+            session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None})
             session.commit()
 
     data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0")
@@ -59,7 +59,7 @@ if page == "Edit Data":
                                           SET tribune_name=:1, supporter_name=:2, gender=:3, stadium_name=:4, \
                                           ticket_price=:5, match_name=:6, date_info=:7 \
                                           WHERE id=:8;')
-                            session.execute(query, {'1':tribune_name_baru, '2':supporter_name_baru, '3':gender_baru, '4':stadium_name_baru, 
+                            session.execute(query, {'1':tribune_name_baru, '2':supporter_name_baru, '3':gender_baru, '4':str(stadium_name_baru), 
                                                     '5':ticket_price_baru, '6':match_name_baru, '7':date_info_baru, '8':id})
                             session.commit()
                             st.experimental_rerun()
