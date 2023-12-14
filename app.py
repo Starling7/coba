@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 list_train = ['', 'Economy', 'Regular', 'VIP', 'VVIP']
 list_gender = ['', 'male', 'female']
-list_price = ['', '150000', '250000', '350000', '500000']
+list_price = ['', 150000, 250000, 350000, 500000]
 
 conn = st.connection("postgresql", type="sql", 
                      url="postgresql://radityacr740:o8KrhDcWj4wN@ep-super-smoke-81752083.us-east-2.aws.neon.tech/fpmbddb")
