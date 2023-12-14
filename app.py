@@ -26,7 +26,7 @@ if page == "Edit Data":
         with conn.session as session:
             query = text('INSERT INTO tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, match_name, date_info) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7);')
-            session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None})
+            session.execute(query, {'1':'', '2':'', '3':'', '4':'', '5':'', '6':'', '7':None})
             session.commit()
 
     data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0")
