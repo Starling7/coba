@@ -1,72 +1,85 @@
 import streamlit as st
+import pandas as pd
 from sqlalchemy import text
 
-list_tribune = ['', 'Economy', 'Regular', 'VIP', 'VVIP']
-list_gender = ['', 'male', 'female']
-list_match= ['', 'Indonesia vs Argentina', 'Indonesia vs Thailand', 'Indonesia vs Malaysia']
-list_stadium = ['', 'Jakarta International Stadium', 'Jatidiri Stadium', 'Maguwoharjo Stadium']
-list_price = ['', '150000', '250000', '350000', '500000']
+list_jabatan = ['', 'Waiter', 'Cashier', 'Cheff']
+list_gender = ['', 'Male', 'Female']
+list_shift = ['', "shift 1", "shift 2", "shift 3", "shift 4"]
 
 conn = st.connection("postgresql", type="sql", 
                      url="postgresql://radityacr740:o8KrhDcWj4wN@ep-super-smoke-81752083.us-east-2.aws.neon.tech/fpmbddb")
 with conn.session as session:
-    query = text('CREATE TABLE IF NOT EXISTS TICKETS (id serial, tribune_name varchar, supporter_name varchar, gender char(25), \
-                                                       stadium_name varchar, ticket_price varchar, match_name varchar, date_info date);')
+    query = text('CREATE TABLE IF NOT EXISTS EMPLOYEE (id serial, employee_name text, gender char(30), date_of_birth date, \
+                                                         jabatan text, handphone text, shift text, total_working_hours time, salary text);')
     session.execute(query)
 
-st.header('FOOTBALL TICKETS DATABASES')
-page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
+st.header('RESTAURANT EMPLOYEE DATA MANAGEMENT')
+page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data","Visualisasi Data"])
 
 if page == "View Data":
-    data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0").set_index('id')
+    data = conn.query('SELECT * FROM EMPLOYEE ORDER By id;', ttl="0").set_index('id')
     st.dataframe(data)
 
 if page == "Edit Data":
     if st.button('Tambah Data'):
         with conn.session as session:
-            query = text('INSERT INTO tickets (tribune_name, supporter_name, gender, stadium_name, ticket_price, match_name, date_info) \
-                          VALUES (:1, :2, :3, :4, :5, :6, :7);')
-            session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None})
+            query = text('INSERT INTO employee (employee_name, gender, date_of_birth, jabatan, handphone, shift, total_working_hours, salary) \
+                          VALUES (:1, :2, :3, :4, :5, :6, :7, :8);')
+            session.execute(query, {'1':'', '2':'', '3':None, '4':'', '5':'', '6':'[]', '7':None, '8':''})
             session.commit()
 
-    data = conn.query('SELECT * FROM tickets ORDER By id;', ttl="0")
+    data = conn.query('SELECT * FROM employee ORDER By id;', ttl="0")
     for _, result in data.iterrows():        
         id = result['id']
-        tribune_name_lama = result["tribune_name"]
-        supporter_name_lama = result["supporter_name"]
+        employee_name_lama = result["employee_name"]
         gender_lama = result["gender"]
-        stadium_name_lama = result["stadium_name"]
-        ticket_price_lama = result["ticket_price"]
-        match_name_lama = result["match_name"]
-        date_info_lama = result["date_info"]
+        date_of_birth_lama = result["date_of_birth"]
+        jabatan_lama = result["jabatan"]
+        handphone_lama = result["handphone"]
+        shift_lama = result["shift"]
+        total_working_hours_lama = result["total_working_hours"]
+        salary_lama = result["salary"]
 
-        with st.expander(f'a.n. {supporter_name_lama}'):
+        with st.expander(f'a.n. {employee_name_lama}'):
             with st.form(f'data-{id}'):
-                tribune_name_baru = st.selectbox("tribune_name", list_tribune, list_tribune.index(tribune_name_lama))
-                supporter_name_baru = st.text_input("supporter_name", supporter_name_lama)
-                gender_baru = st.selectbox("gender", list_gender, list_gender.index(gender_lama))
-                stadium_name_baru = st.selectbox("stadium_name", list_stadium, list_stadium.index(stadium_name_lama))
-                ticket_price_baru = st.selectbox("ticket_price", list_price, list_price.index(ticket_price_lama))
-                match_name_baru = st.selectbox("match_name", list_match, list_match.index(match_name_lama))
-                date_info_baru = st.date_input("date_info", date_info_lama)
+                employee_name_baru = st.text_input("employee_name", employee_name_lama)
+                gender_baru = st.selectbox("gender", list_gender, list_gender.index(gender_lama) if gender_lama in list_gender else 0)
+                date_of_birth_baru = st.date_input("date_of_birth", date_of_birth_lama)
+                jabatan_baru = st.selectbox("jabatan", list_jabatan, list_jabatan.index(jabatan_lama) if jabatan_lama in list_jabatan else 0)
+                handphone_baru = st.text_input("handphone", handphone_lama)
+                shift_baru = st.multiselect("shift", list_shift, eval(shift_lama))
+                total_working_hours_baru = st.time_input("total_working_hours", total_working_hours_lama)
+                salary_baru = st.text_input("salary", salary_lama)
                 
                 col1, col2 = st.columns([1, 6])
 
                 with col1:
                     if st.form_submit_button('UPDATE'):
                         with conn.session as session:
-                            query = text('UPDATE tickets \
-                                          SET tribune_name=:1, supporter_name=:2, gender=:3, stadium_name=:4, \
-                                          ticket_price=:5, match_name=:6, date_info=:7 \
-                                          WHERE id=:8;')
-                            session.execute(query, {'1':tribune_name_baru, '2':supporter_name_baru, '3':gender_baru, '4':str(stadium_name_baru), 
-                                                    '5':ticket_price_baru, '6':match_name_baru, '7':date_info_baru, '8':id})
+                            query = text('UPDATE employee \
+                                          SET employee_name=:1, gender=:2, date_of_birth=:3, \
+                                          jabatan=:4, handphone=:5, shift=:6, total_working_hours=:7, salary=:8 \
+                                          WHERE id=:9;')
+                            session.execute(query, {'1':employee_name_baru, '2':gender_baru, '3':date_of_birth_baru, '4':jabatan_baru, '5':handphone_baru, '6':str(shift_baru), '7':total_working_hours_baru, '8':salary_baru, '9':id})
                             session.commit()
                             st.experimental_rerun()
                 
                 with col2:
                     if st.form_submit_button('DELETE'):
-                        query = text(f'DELETE FROM tickets WHERE id=:1;')
+                        query = text(f'DELETE FROM employee WHERE id=:1;')
                         session.execute(query, {'1':id})
                         session.commit()
                         st.experimental_rerun()
+                
+if page == "Visualisasi Data":
+    st.subheader("Visualisasi Gender")
+    data = conn.query('SELECT gender, COUNT(*) as count FROM employee GROUP BY gender;, ttl="0"')
+    st.pie_chart(data.set_index('gender'))
+    '\n'
+    st.subheader("Visualisasi Jabatan")
+    data = conn.query('SELECT jabatan, COUNT(*) as count FROM employee GROUP BY jabatan;', ttl="0")
+    st.bar_chart(data.set_index('jabatan'))
+    '\n'
+    st.subheader("Visualisasi Shift")
+    data = conn.query('SELECT shift, COUNT(*) as count FROM employee GROUP BY shift;', ttl="0")
+    st.bar_chart(data.set_index('shift'))
